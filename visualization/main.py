@@ -15,15 +15,8 @@ def visualize_u_sigma_v():
 
     os.makedirs("results/svd_parts", exist_ok=True)
     print("Loading image...")
-    Y, _, _ = ImageLoader().load_ycbcr(image_path)
-
-    print("Computing SVD...")
-    # Lấy số thành phần vừa phải để dễ trực quan hóa
-    max_k = min(Y.shape)
-    svd = SVD(Y, n_components=max_k)
-
-    U, Sigma, V = svd.U, svd.Sigma, svd.V
-    sigma_vals = np.diagonal(Sigma) if Sigma.ndim == 2 else Sigma
+    # Lấy thêm Y, Cb, Cr từ ImageLoader
+    Y, Cb, Cr = ImageLoader().load_ycbcr(image_path)
 
     # Hàm chuẩn hóa ma trận bất kỳ về [0, 255] để lưu thành ảnh PIL
     def normalize_to_image(matrix):
@@ -34,14 +27,26 @@ def visualize_u_sigma_v():
             norm = np.zeros_like(matrix)
         return Image.fromarray(norm.astype(np.uint8))
 
+    # 0. Trực quan hóa và lưu ảnh Y, Cb (rb), Cr (rc)
+    print("Saving Y, Cb, Cr images...")
+    normalize_to_image(Y).save("results/svd_parts/Y_channel.jpg")
+    normalize_to_image(Cb).save("results/svd_parts/Cb_channel.jpg")  # Hoặc rb
+    normalize_to_image(Cr).save("results/svd_parts/Cr_channel.jpg")  # Hoặc rc
+
+    print("Computing SVD...")
+    # Lấy số thành phần vừa phải để dễ trực quan hóa
+    max_k = min(Y.shape)
+    svd = SVD(Y, n_components=max_k)
+
+    U, Sigma, V = svd.U, svd.Sigma, svd.V
+    sigma_vals = np.diagonal(Sigma) if Sigma.ndim == 2 else Sigma
+
     # 1. Trực quan hóa U (Left Singular Vectors - Biểu diễn đặc trưng dọc/không gian hàng)
     img_u = normalize_to_image(U)
     img_u.save("results/svd_parts/U_matrix.jpg")
 
     # 2. Trực quan hóa Sigma (Singular Values - Phân bố năng lượng đường chéo)
-    # Vì Sigma là vector/ma trận 1 chiều chứa các giá trị kỳ dị giảm dần, ta tái hiện thành ảnh dạng dải sáng tối
     sigma_matrix = np.diag(sigma_vals) if Sigma.ndim == 1 else Sigma
-    # Log scale hoặc chuẩn hóa để nhìn rõ sự chênh lệch lớn giữa sigma lớn và sigma nhỏ
     img_sigma = normalize_to_image(np.log1p(sigma_matrix))
     img_sigma = img_sigma.resize(
         (512, 512), Image.Resampling.NEAREST

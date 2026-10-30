@@ -6,7 +6,7 @@
 python -m main
 ```
 
-## Visualize matrix U, Sigma, V
+## Visualize Y, rb, rc
 
 ```bash
 python -m visualization.main
