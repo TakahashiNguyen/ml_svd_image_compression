@@ -9,7 +9,7 @@ class SVDProcessor:
     với số lượng singular values được giữ lại.
     """
 
-    def __init__(self, rank_tolerance=1e-3, max_iterations=250):
+    def __init__(self, rank_tolerance=1e-3, max_iterations=5000):
         self.rank_tolerance = rank_tolerance
         self.max_iterations = max_iterations
 

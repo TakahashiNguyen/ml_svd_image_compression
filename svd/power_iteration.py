@@ -40,13 +40,3 @@ class PowerIteration:
             np.linalg.norm(new_vector + old_vector),
         )
         return change < self.tolerance
-
-    def trace_steps(self, matrix, start_vector, n_steps):
-        """Run n_steps by hand; return a list of (step, B v, v, Rayleigh)."""
-        vector = np.asarray(start_vector, dtype=float)
-        history = []
-        for step in range(1, n_steps + 1):
-            product = matrix @ vector
-            vector = product / np.linalg.norm(product)
-            history.append((step, product, vector, vector @ matrix @ vector))
-        return history
