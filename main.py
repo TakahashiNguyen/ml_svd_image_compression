@@ -120,8 +120,6 @@ def run_ycbcr_compression_table():
         )
     )
 
-    print("\nĐã hoàn tất nén ảnh. Kết quả được lưu trong thư mục results.")
-
 
 if __name__ == "__main__":
     run_ycbcr_compression_table()
